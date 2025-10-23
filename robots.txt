@@ -1,0 +1,34 @@
+# robots.txt for https://vrchatplugin.net
+# Author: VRChat Plugin Studio
+# Last updated: 2025-10-23
+
+# Tüm arama motorlarının siteyi taramasına izin ver
+User-agent: *
+Allow: /
+
+# Tarama hızını dengelemek için (opsiyonel)
+Crawl-delay: 5
+
+# Gizli veya gereksiz klasörleri hariç tut
+Disallow: /admin/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /backup/
+Disallow: /cgi-bin/
+
+# Medya veya geçici dosyalar (eğer varsa)
+Disallow: /uploads/temp/
+Disallow: /assets/temp/
+
+# Sitemap bağlantısı (Google ve Bing için kritik önemde)
+Sitemap: https://vrchatplugin.net/sitemap.xml
+
+# Googlebot için özel ayar (isteğe bağlı)
+User-agent: Googlebot
+Allow: /
+Disallow: /private/
+
+# Yandex özel ayar
+User-agent: Yandex
+Allow: /
+Crawl-delay: 10
